@@ -11,9 +11,8 @@ https://samx18.io/blog/2018/09/05/python3_raspberrypi.html
 Run these commands to install the required software and libraries:
 `mpg321` and `mpyg321` are optional, but are required if you want to play audio from thhe raspberry pi
 ```
-sudo pip3 install board adafruit-circuitpython-neopixel
 sudo apt-get install mpg321
-sudo pip3 install mpyg321
+sudo pip3 install board adafruit-circuitpython-neopixel mpyg321
 ```
 
 Start the program with this command:
