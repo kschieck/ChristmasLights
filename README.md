@@ -3,7 +3,7 @@ A system for Christmas lights powered by a RaspberryPi and an Arduino.
 
 This program turns your arduino into a lights controller
 
-## Setup
+## Setup and Testing
 
 I started with `Raspbian`, which came with `python3` pre-installed, but if you don't have it, install it by following instructions found here:
 https://samx18.io/blog/2018/09/05/python3_raspberrypi.html
@@ -18,8 +18,30 @@ sudo pip3 install board adafruit-circuitpython-neopixel mpyg321
 Start the program with this command:
 `sudo python3 lights_player.py`
 
-Or, without sound
+Or, without sound:
 `sudo python3 lights_player.py --no-sound`
+
+For debug prints, use this command line argument:
+`--debug`
+
+To play the csv and mp3 of your choosing, use this argument:
+`--name="<filename without extension>"`
+
+Examples:
+```
+# This will show debug statements, and play the file ./data/pattern1.csv
+sudo python3 lights_player.py --no-sound --debug --name="pattern1"
+
+# This will play the files data/Through the Fire and Flames.mp3 and data/Through the Fire and Flames.csv with no debug statements
+sudo python3 lights_player.py --name="Through the Fire and Flames"
+
+# This will play data/test.csv with no sound, no debug statements
+sudo python3 lights_player.py --no-sound
+```
+
+## Running the Web Server
+
+TODO
 
 ## Parts List
 Many parts I already owned, so do your own research on the legitimacy of these offers:
