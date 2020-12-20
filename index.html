@@ -1,0 +1,50 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+
+<style>
+table tr td {
+    padding: 3px;
+    text-align: center;
+}
+table tr td form {
+    display: block;
+    margin: auto;
+}
+</style>
+
+<script>
+
+function postSong(event) {
+    var data = {"name" : event.target.name};
+    if (event.target.value.includes("no sound")) {
+        data.no_sound = 1;
+    }
+    var response = httpPOST("/", data);
+    alert(response);
+}
+
+function httpPOST(theUrl, data)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("Post", theUrl, false);
+    var dataString = JSON.stringify(data);
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    xmlHttp.send(dataString);
+    return xmlHttp.responseText;
+}
+
+</script>
+
+</head>
+<body>
+    <h1>Christmas Lights!</h1>
+    <table>
+        <tr>
+            <td>Baby It's Cold Outside</td>
+            <td><input type="button" onClick="postSong(event)" name="Baby It's Cold Outside" value="Play" /></td>
+            <td><input type="button" onClick="postSong(event)" name="Baby It's Cold Outside" value="Play (no sound)" /></td>
+        </tr>
+    </table>
+</body>
+</html>
