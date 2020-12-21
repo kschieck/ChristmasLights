@@ -5,7 +5,7 @@
 <style>
 table tr td {
     padding: 3px;
-    text-align: center;
+    text-align: left;
 }
 table tr td form {
     display: block;
@@ -13,38 +13,88 @@ table tr td form {
 }
 </style>
 
-<script>
-
-function postSong(event) {
-    var data = {"name" : event.target.name};
-    if (event.target.value.includes("no sound")) {
-        data.no_sound = 1;
-    }
-    var response = httpPOST("/", data);
-    alert(response);
-}
-
-function httpPOST(theUrl, data)
-{
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("Post", theUrl, false);
-    var dataString = JSON.stringify(data);
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');
-    xmlHttp.send(dataString);
-    return xmlHttp.responseText;
-}
-
-</script>
-
 </head>
 <body>
     <h1>Christmas Lights!</h1>
-    <table>
-        <tr>
-            <td>Baby It's Cold Outside</td>
-            <td><input type="button" onClick="postSong(event)" name="Baby It's Cold Outside" value="Play" /></td>
-            <td><input type="button" onClick="postSong(event)" name="Baby It's Cold Outside" value="Play (no sound)" /></td>
-        </tr>
+    <p>by Kyle, for Lexie</p>
+    <table id="options_table">
     </table>
+
+    <script>
+
+    function postSong(event) {
+        var data = {"name" : event.target.name};
+        if (event.target.value.includes("no sound")) {
+            data.no_sound = 1;
+        }
+        httpRequest("/", "post", data);
+    }
+
+    function loadOptions() {
+        var response = httpRequest("/options", "get");
+        optionsArr = JSON.parse(response);
+
+        var regex = /.*\.csv/;
+        csvFiles = optionsArr.filter(name => name.match(regex));
+
+        regex = /.*\.mp3/;
+        mp3Files = optionsArr.filter(name => name.match(regex));
+
+        var table = document.getElementById("options_table");
+        console.log(table);
+
+        csvFiles.forEach(function (elem) {
+            var mp3FileName = elem.replace(".csv", ".mp3");
+            addOption(table, elem.replace(".csv", ""), mp3Files.indexOf(mp3FileName) >= 0);
+        });
+    }
+
+    function addOption(table, name, hasAudio) {
+
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var input1 = document.createElement("input");
+        var input2 = document.createElement("input");
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+
+        td1.innerHTML = name;
+        td2.appendChild(input1);
+        td3.appendChild(input2);
+
+        input1.name = name;
+        input2.name = name;
+
+        input1.type = "button";
+        input2.type = "button";
+
+        input1.value = "Play";
+        input2.value = "Play (no sound)";
+
+        input1.addEventListener("click", postSong);
+        input2.addEventListener("click", postSong);
+
+        table.appendChild(tr);
+    }
+
+    function httpRequest(theUrl, type, data=null)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open(type, theUrl, false);
+        if (data != null) {
+            var dataString = JSON.stringify(data);
+            xmlHttp.setRequestHeader('Content-Type', 'application/json');
+        }
+        xmlHttp.send(dataString);
+        return xmlHttp.responseText;
+    }
+
+    loadOptions();
+
+    </script>
 </body>
 </html>

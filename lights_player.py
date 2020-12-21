@@ -5,12 +5,33 @@ import time
 import random
 import sys
 import re
+import signal
+import atexit
 
-# TODO restart arduino on new serial connection, however that's done
 # TODO baud rate calculation
-# TODO add more songs
 
-def main_loop(argv):
+serial_name = '/dev/ttyACM0'
+serial_baud_rate = 9600 # bytes per second possible
+
+ser = None # serial connection
+
+killed = False
+
+def init_serial_connection():
+    try:
+        global ser
+        ser = serial.Serial(serial_name, serial_baud_rate, serial.EIGHTBITS, timeout=1)
+        ser.flush()
+    except serial.serialutil.SerialException as err:
+        print("Failed to open serial connection to", serial_name, err)
+        return False
+    return True
+
+def handle_exit(a=1, b=2):
+    global killed
+    killed = True
+
+def main_loop(argv, ser):
     # allow for no sound command line argument to make it easier to play
     no_sound = '--no-sound' in argv
     debug = '--debug' in argv
@@ -29,9 +50,6 @@ def main_loop(argv):
     if not no_sound:
         from mpyg321.mpyg321 import MPyg321Player
 
-    serial_name = '/dev/ttyACM0'
-    serial_baud_rate = 9600 # bytes per second possible
-
     bytes_sent = 0
     bytes_expected = 0
 
@@ -44,16 +62,10 @@ def main_loop(argv):
     line_bytes = []
     line_bytes_idx = 0 # the index in line_bytes that we have already transferred up to
 
-    try:
-        ser = serial.Serial(serial_name, serial_baud_rate, serial.EIGHTBITS, timeout=1)
-        ser.flush()
-    except serial.serialutil.SerialException as err:
-        print("Failed to open serial connection to", serial_name, err)
-        return
-
     with open('data/' + file_name + '.csv') as fp:
 
-        while True:
+        global killed
+        while not killed:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
                 x = re.search("DATA (\d+)", line)
@@ -86,5 +98,14 @@ def main_loop(argv):
             # rate limit the bytes
             time.sleep(0.01)
 
+        if ser is not None:
+            if debug:
+                print("Closing serial connection")
+            ser.close()
+
 if __name__ == '__main__':
-    main_loop(sys.argv)
+    if init_serial_connection():
+        atexit.register(handle_exit)
+        signal.signal(signal.SIGTERM, handle_exit)
+        signal.signal(signal.SIGINT, handle_exit)
+        main_loop(sys.argv, ser)

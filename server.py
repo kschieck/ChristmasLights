@@ -3,6 +3,8 @@ import sys
 import time
 from subprocess import Popen
 import json
+import os
+import signal
 
 # TODO change IP address or get it dynamically
 
@@ -13,6 +15,14 @@ current_subprocess = None
 class MyServer(SimpleHTTPRequestHandler):
 
     def do_GET(self):
+        print(self.path)
+        if self.path == '/options':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            json_data = json.dumps([f for f in os.listdir("./data")])
+            self.wfile.write(bytes(json_data, encoding="ASCII"))
+            return
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
@@ -35,8 +45,9 @@ class MyServer(SimpleHTTPRequestHandler):
         # start the script (kill past instance)
         global current_subprocess
         if current_subprocess != None:
-            current_subprocess.terminate()
-        current_subprocess = Popen(command, shell=True)
+            # Kill the child process
+            os.killpg(os.getpgid(current_subprocess.pid), signal.SIGTERM)
+        current_subprocess = Popen([command], shell=True, preexec_fn=os.setpgrp)
         self.do_GET()
 
 def run(server_class=HTTPServer, handler_class=MyServer):
