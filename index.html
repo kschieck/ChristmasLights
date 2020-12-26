@@ -20,6 +20,8 @@ table tr td form {
     <table id="options_table">
     </table>
 
+    <input type="button" value="Stop" onClick="postStop(event)" />
+
     <script>
 
     function postSong(event) {
@@ -28,6 +30,10 @@ table tr td form {
             data.no_sound = 1;
         }
         httpRequest("/", "post", data);
+    }
+
+    function postStop(event) {
+        httpRequest('/stop', "post", null);
     }
 
     function loadOptions() {
@@ -63,7 +69,9 @@ table tr td form {
         tr.appendChild(td3);
 
         td1.innerHTML = name;
-        td2.appendChild(input1);
+        if (hasAudio) {
+            td2.appendChild(input1);
+        }
         td3.appendChild(input2);
 
         input1.name = name;

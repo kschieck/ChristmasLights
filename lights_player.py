@@ -8,10 +8,8 @@ import re
 import signal
 import atexit
 
-# TODO baud rate calculation
-
-serial_name = '/dev/ttyACM0'
-serial_baud_rate = 9600 # bytes per second possible
+serial_name = '/dev/ttyUSB0'
+serial_baud_rate = 115200 # bits per second possible
 
 ser = None # serial connection
 
@@ -53,7 +51,7 @@ def main_loop(argv, ser):
     bytes_sent = 0
     bytes_expected = 0
 
-    bytes_per_transfer = 30 # must divide bytes per transfer evenly
+    bytes_per_transfer = 50 # must divide bytes per transfer evenly
     bytes_per_request = 150
 
     if not no_sound:
@@ -62,13 +60,18 @@ def main_loop(argv, ser):
     line_bytes = []
     line_bytes_idx = 0 # the index in line_bytes that we have already transferred up to
 
+
+    if not no_sound:
+        player.play_song('data/' + file_name + '.mp3')
+        player.pause()
+
     with open('data/' + file_name + '.csv') as fp:
 
         global killed
         while not killed:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
-                x = re.search("DATA (\d+)", line)
+                x = re.search("(\d+)", line)
 
                 if x != None:
                     if debug:
@@ -79,7 +82,7 @@ def main_loop(argv, ser):
                     if (currentLine == ""):
                         line_bytes = [0 for _ in range(bytes_per_request)]
                         continue
-                    line_bytes = bytes([int(int(x) / 5) for x in currentLine.split(',')])
+                    line_bytes = bytes([int(x) for x in currentLine.split(',')])
                     continue
 
                 x = re.search("START", line)
@@ -87,7 +90,7 @@ def main_loop(argv, ser):
                     if debug:
                         print(line);
                     if not no_sound:
-                        player.play_song('data/' + file_name + '.mp3')
+                        player.resume()
 
             if bytes_sent < bytes_expected:
                 # write the next bytes and update the idx
@@ -96,7 +99,7 @@ def main_loop(argv, ser):
                 bytes_sent += bytes_per_transfer
 
             # rate limit the bytes
-            time.sleep(0.01)
+            time.sleep(0.001)
 
         if ser is not None:
             if debug:

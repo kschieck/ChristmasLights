@@ -6,8 +6,10 @@
 #define MEMORY_PER_UPDATE        (NUM_LEDS * 3)
 #define TOTAL_MEMORY             (TOTAL_UPDATES_STORED * MEMORY_PER_UPDATE)
 
-#define UPDATES_PER_SECOND        5
+#define UPDATES_PER_SECOND        10
 #define UPDATE_DELAY             (1000 / UPDATES_PER_SECOND)
+
+#define BAUD_RATE                 115200
 
 uint8_t secondsData[TOTAL_UPDATES_STORED * NUM_LEDS * 3];
 CRGB leds[NUM_LEDS];
@@ -22,7 +24,7 @@ unsigned long lastUpdate;
 
 void setup() {
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
   lastUpdate = millis();
 }
 
@@ -32,7 +34,7 @@ void requestData() {
   
   // If we have room for more data and the last request is complete, request more data
   if (hasRoomForData && requestedIdx == loadedIdx) {
-    String dataRequest = "DATA " + String((requestedIdx / MEMORY_PER_UPDATE) + 1);
+    String dataRequest = String((requestedIdx / MEMORY_PER_UPDATE) + 1);
     Serial.println(dataRequest);
     requestedIdx += MEMORY_PER_UPDATE;
   }
