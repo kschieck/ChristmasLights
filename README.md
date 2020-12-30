@@ -1,7 +1,7 @@
 # ChristmasLights
 A system for Christmas lights powered by a RaspberryPi and an Arduino.
 
-This program turns your arduino into a lights controller
+This program turns your arduino into a lights controller and the RaspberryPi into the driver
 
 ## Setup and Testing
 
@@ -41,17 +41,42 @@ sudo python3 lights_player.py --no-sound
 
 ## Running the Web Server
 
-TODO
+Use this command to run a server where you can pick songs or patterns to play from the data folder
+```
+sudo python3 server.py
+```
+
+Then visit `<ip>:8000` from any device on the same network. You'll see the IP in the output of the server command above
+
+## Adding Songs and Patterns
+
+Add a `.csv` file and optionally a matching file name `.mp3` file to the data directory on the raspberry pi (or other device) and it should be made available to play via the server.
+
+## Creating New Songs and patterns
+
+Visit http://doityourselfchristmas.com/ and download the software Vixen3. With this app you can create light shows to be in sync with songs and export the files to a format readable by this software.
+
+Steps:
+- Create output display (Vixen)
+- Create pattern in the sequence editor (Vixen)
+- Save sequence
+- Export as CSV (100 ms)
 
 ## Parts List
 Many parts I already owned, so do your own research on the legitimacy of these offers:
 
 - Raspberry Pi: https://www.raspberrypi.org/products/raspberry-pi-4-model-b/ (You do not need the latest and greatest, my pi is a couple years old. I'd like to try this out on a raspberry pi zero)
 - Raspberry pi power cable
-- Arduino: https://store.arduino.cc/usa/arduino-uno-rev3 (I used an uno, though I'd like to use a nano (see alibaba for super cheap nanos!), if it works just as well)
+- Arduino: https://www.alibaba.com/product-detail/Micro-USB-Nano-V3-0-ATmega328P_62019159090.html (I didn't purchase this specific one)
 - LEDs: https://www.amazon.ca/gp/product/B01AG923GI (one of many options)
 - Some wires, male and female: https://www.amazon.ca/Jumper-Wires-Premium-200mm-Female/dp/B008MRZSH8
 
 Optional:
 - Power adapter for LEDs: https://www.amazon.ca/gp/product/B07DQR919Y If you want to power more LEDs, you'll want a power adapter for additional amperage
 - Connectors for power adapter: https://www.amazon.ca/gp/product/B076SXZK7M
+
+## Resources Used While Creating this Project
+
+https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
+
+https://howtomechatronics.com/tutorials/arduino/how-to-control-ws2812b-individually-addressable-leds-using-arduino/
