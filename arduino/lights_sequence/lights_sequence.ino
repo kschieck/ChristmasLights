@@ -14,9 +14,9 @@
 uint8_t secondsData[TOTAL_UPDATES_STORED * NUM_LEDS * 3];
 CRGB leds[NUM_LEDS];
 
-int idx = 0; // The idx of data we are playing
-int loadedIdx = 0; // How much data we've loaded
-int requestedIdx = 0; // How much data we've requested
+long idx = 0; // The idx of data we are playing
+long loadedIdx = 0; // How much data we've loaded
+long requestedIdx = 0; // How much data we've requested
 
 bool start = false;
 

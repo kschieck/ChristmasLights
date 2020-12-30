@@ -71,7 +71,7 @@ def main_loop(argv, ser):
         while not killed:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').rstrip()
-                x = re.search("(\d+)", line)
+                x = re.search("^(\d+)$", line)
 
                 if x != None:
                     if debug:
@@ -88,7 +88,7 @@ def main_loop(argv, ser):
                 x = re.search("START", line)
                 if x != None:
                     if debug:
-                        print(line);
+                        print(line)
                     if not no_sound:
                         player.resume()
 
