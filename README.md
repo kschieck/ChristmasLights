@@ -5,6 +5,17 @@ This program turns your Arduino into a lights controller and your RaspberryPi in
 
 ## Setup and Testing
 
+### Wiring
+
+Nano to LED Strip
+```
+5v -> VCC (power in)
+D7 -> 220 Ohm resistor -> DIN (Data in)
+GND -> GND (ground)
+```
+
+### Testing the Script
+
 I started with `Raspbian`, which came with `python3` pre-installed, but if you don't have it, install it by following instructions found here:
 https://samx18.io/blog/2018/09/05/python3_raspberrypi.html
 
