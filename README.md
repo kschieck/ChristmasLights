@@ -3,6 +3,8 @@ A system for Christmas lights powered by a RaspberryPi and an Arduino.
 
 This program turns your Arduino into a lights controller and your RaspberryPi into the driver
 
+Demo video: https://www.youtube.com/watch?v=6XQdZSkl_00
+
 ## Setup and Testing
 
 ### Wiring
